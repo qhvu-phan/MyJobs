@@ -1,0 +1,96 @@
+body{
+    background-color: #6666FF;
+    font-family: monospace;
+}
+.container{
+    max-width: 450px;
+    width: 100%;
+    margin: 120px auto;
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+}
+.action {
+    align-items: center;
+    text-align: center;
+}
+.todo {
+    font-size: 30px;
+    color:#646464 ;
+    align-items: center;
+}
+#new-label, #new-time{
+    height: 20px;
+    font-size: 20px;
+}
+.button {
+    font-size: 30px;
+    color: #00cc00;
+    margin: 10px auto;
+    border: 1px solid #00cc00;
+    cursor: pointer;
+}
+ul li {
+    max-width: 340px;
+    width: 100%;
+    height: 45px;
+    list-style-type: none;
+    border: 1px solid #646464;
+    padding: 0 15px;
+    background-color: #FAF0E6;
+    margin-bottom: 8px;
+    line-height: 45px;
+    font-size: 20px;
+    color:black;
+    position: relative;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+ul li:hover{
+     background-color: #66ff99;
+}
+.container .todos-list{
+    max-height: 250px;
+    overflow-y: auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#p {
+    font-size: 30px;
+    color:#646464;
+    margin: auto;
+}
+ul li span{
+    position: absolute;
+    right: -55px;
+    color:white;
+    background-color: red;
+    width: 55px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease ;
+    border-radius: 0 3px 4px 0px;
+}
+ul li:hover span{
+    right: 0px;
+}
+.container .footer{
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 30px;
+}
+.container .footer button{
+    background-color: red;
+    margin-left: 5px;
+    color:white;
+    width: 150px;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.hidden{
+    display: none;
+}

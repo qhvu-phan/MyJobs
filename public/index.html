@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TODOLIST</title>
+    <link rel="stylesheet" href="index.css">
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/8.7.0/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/8.7.0/firebase-auth.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-database.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-functions.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-storage.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-analytics.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-remote-config.js"></script>
+    <script defer src="/__/firebase/8.7.0/firebase-performance.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+   
+  </head>
+  <body>
+    <div class="container">
+        <div class="action"> 
+            <h1 style="font-family: Arial, Helvetica, sans-serif; font-size: 50px;">My Jobs!</h1>
+            <label for="" class="todo" style="font-family: monospace;">Job name: </label>
+            <input type="text" id="new-label"style="height: 20px; font-size: 20px;" autocomplete="none">
+            <br>
+            <label for="" class="todo" style="font-family: monospace;">Deadline: </label>
+            <input type="text" id="new-time" style="height: 20px; font-size: 20px;" autocomplete="none">
+            <br>
+            <br>
+            <button class="button" id="add-btn" style="color: #00cc00;font-size: 30px;
+            border: 1px solid green ; font-family: monospace;">Add in list</button>
+            <p id="p">TODO LIST: </p>
+            <hr>
+         </div>  
+         
+             <ul id="todo-list" class="todos-list">
+               <li>ok k</li>
+             </ul>
+      <div class="footer">
+        <span id="count-todo" style="color: #646464;">You have 0 jobs today!</span>
+        <button id="clear" > Clear All</button>
+        <button id="update" style="background-color: #00cc00;">Update</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+          var db = firebase.firestore();
+          var todoList = [];
+          var list = 0
+          var counter = 0
+          var update = null
+           function reload() {
+               todoList = [] 
+               counter = 0
+               db.collection("todos").get()
+                  .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                      todoList.push(doc.data())
+                      todoList[counter].id = doc.id
+                      counter ++ 
+                      document.getElementById('count-todo').innerHTML="You have "+counter+" jobs today!"
+                      
+                     });
+                  })
+                  .then( () => {
+                      console.log(todoList)
+                      render();
+                  })
+                 .then( () => {
+                      document.querySelectorAll(".span-btn").forEach( SPAN => {
+                        SPAN.addEventListener('click', () => {
+                        var muc = SPAN.title
+                          db.collection("todos").doc(muc).delete().then(() => {
+                           reload();
+                           alert("Delete job successfully!")
+                          })
+                  .catch((error) => {
+                      console.error("Error removing document: ", error);
+                  });
+                      })
+                      })
+                      document.querySelectorAll(".list-li").forEach( li => {
+                       li.addEventListener('click', () => {
+                         update = li.title
+                      }) 
+                })
+                  }
+                 );
+           }
+           // update
+           document.getElementById("update").addEventListener('click', () =>{
+                  var todo = document.getElementById("new-label")
+                  var time  = document.getElementById("new-time")
+                     if( todo.value == '' || time.value == '' || update == null){
+                             alert('Please enter full information or select Jobs to Update')
+                         } else {  
+                                console.log( todo.value + time.value + update)
+                                db.collection("todos").doc(update).update({
+                                  todo: todo.value,
+                                  deadline: time.value
+                                }).then( () => {
+                                  alert('Update successfully!');
+                                  todo.value=""
+                                  time.value=""
+                                  reload()
+                                }).catch( error => {
+                                  alert("Error", error)
+                                })
+                }
+           })
+           // delete all jobs
+               document.getElementById('clear').addEventListener('click', () => {
+                      reload()
+                      var span = document.querySelectorAll(".span-btn")
+                       for ( let i = 0 ; i < span.length; i++) {
+                         db.collection("todos").doc(span[i].title).delete()
+                       }
+                       alert("Delete all jobs successfully!")
+                       document.getElementById('count-todo').innerHTML="You have "+0+" jobs today!" 
+                       reload();
+                    })
+              
+            // reload lai trang
+           reload();
+           // add jobs
+          var addBtn = document.getElementById('add-btn');
+              addBtn.addEventListener('click', function addItem() {
+                    var todo = document.getElementById('new-label');
+                    var time = document.getElementById('new-time');
+                    var newItem = { todo: todo.value, deadline: time.value };
+                         if( todo.value == '' || time.value == ''){
+                             alert('Please enter full information!')
+                         } else {  
+                                    // todoList.push(newItem);
+                                   db.collection('todos').add(newItem).then( () => {
+                                       reload();
+                                       todo.value='';
+                                       time.value='';
+                                    })    
+                           }           
+              });
+            // render jobs
+            function  render() {
+              var htmlList = document.getElementById('todo-list')
+              var todolist = todoList.map( function(item) {
+                return '<li class="list-li" title="'+item.id+'">'+ item.todo +", "+item.deadline + '<span class="span-btn" title="'+item.id+'"> Clear </span>' +'</li>'
+              } )
+              htmlList.innerHTML = todolist.join('');
+            }    
+      });
+    </script>
+  </body>
+</html>
